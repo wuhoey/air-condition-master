@@ -13,7 +13,6 @@ export interface CalculationResults {
   baseKcal: number;
   totalKcal: number;
   totalWatts: number;
-  taiwanTons: number; // 台灣噸 (1噸 ~ 2500 kcal/hr)
   recommendedBTU: number;
   factors: {
     heightMultiplier: number;
