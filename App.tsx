@@ -10,7 +10,8 @@ import {
   AlertTriangle,
   Info,
   ChevronRight,
-  RefreshCcw
+  RefreshCcw,
+  MessageCircle
 } from 'lucide-react';
 import { CalculationInputs, CalculationResults } from './types';
 import { 
@@ -50,6 +51,7 @@ const App: React.FC = () => {
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [length, setLength] = useState<number>(0);
   const [width, setWidth] = useState<number>(0);
+  const [showLinePopup, setShowLinePopup] = useState<boolean>(false);
 
   // 换算函数：1坪 = 3.3058 平方公尺
   const PING_TO_SQM = 3.3058;
@@ -167,6 +169,19 @@ const App: React.FC = () => {
   useEffect(() => {
     calculate();
   }, [calculate]);
+
+  // LINE 弹窗：页面加载后2秒显示
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLinePopup(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const closeLinePopup = () => {
+    setShowLinePopup(false);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -313,6 +328,26 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* LINE Official Link */}
+          <section className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-2xl shadow-lg">
+            <a 
+              href="https://lin.ee/faGiFku" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center gap-3 text-white"
+            >
+              <MessageCircle size={32} className="text-white" />
+              <div className="text-center">
+                <div className="text-lg font-bold mb-1">加入官方！領取！</div>
+                <div className="text-base font-semibold">AI數位工程計算器</div>
+              </div>
+              <div className="bg-white/20 px-6 py-3 rounded-full text-sm font-medium hover:bg-white/30 transition-colors flex items-center gap-2">
+                點擊加入 LINE 官方帳號
+                <ChevronRight size={16} />
+              </div>
+            </a>
           </section>
 
           <section className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
@@ -462,6 +497,38 @@ const App: React.FC = () => {
           </div>
         </footer>
       </div>
+
+      {/* LINE 弹窗 */}
+      {showLinePopup && (
+        <div className={`line-overlay ${showLinePopup ? 'show' : ''}`} onClick={closeLinePopup}>
+          <div className="line-modal" onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🎁</div>
+            
+            <div className="modal-title">
+              新增LINE!LEGO~加入官方!索取更多工程神器
+            </div>
+            
+            <div className="modal-desc">
+              如果不小心關閉網頁，剛算的數據會消失！<br />
+              立即加入官方 LINE，<br />
+              <b>免費解鎖「一鍵輸出報價單」功能</b>。
+            </div>
+
+            <a 
+              href="https://lin.ee/faGiFku" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="line-btn"
+            >
+              👉 點此加入領取神器
+            </a>
+
+            <button className="close-btn" onClick={closeLinePopup}>
+              忍痛拒絕，我喜歡手寫報價單
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
