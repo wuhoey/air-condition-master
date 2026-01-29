@@ -70,6 +70,9 @@ const App: React.FC = () => {
     if (value > 0 && width > 0) {
       const { ping } = calculateAreaFromDimensions(value, width);
       setInputs(prev => ({ ...prev, area: ping }));
+    } else {
+      // 如果长度或宽度为0，将坪数归0
+      setInputs(prev => ({ ...prev, area: 0 }));
     }
   };
 
@@ -78,12 +81,21 @@ const App: React.FC = () => {
     if (length > 0 && value > 0) {
       const { ping } = calculateAreaFromDimensions(length, value);
       setInputs(prev => ({ ...prev, area: ping }));
+    } else {
+      // 如果长度或宽度为0，将坪数归0
+      setInputs(prev => ({ ...prev, area: 0 }));
     }
   };
 
-  const handleAreaChange = (value: number) => {
-    setInputs(prev => ({ ...prev, area: value }));
-    // 当直接修改坪数时，不清空长度和宽度，但可以显示对应的面积
+  const handleAreaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // 允许空值，这样用户可以清除输入
+    if (value === '') {
+      setInputs(prev => ({ ...prev, area: 0 }));
+    } else {
+      const numValue = parseFloat(value) || 0;
+      setInputs(prev => ({ ...prev, area: numValue }));
+    }
   };
 
   const calculate = useCallback(() => {
@@ -229,7 +241,10 @@ const App: React.FC = () => {
                       <input 
                         type="number" 
                         value={length > 0 ? length : ''}
-                        onChange={(e) => handleLengthChange(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) || 0;
+                          handleLengthChange(value);
+                        }}
                         className="w-full px-4 py-4 bg-slate-800 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white text-lg placeholder:text-slate-500"
                         step="1"
                         placeholder="0"
@@ -243,7 +258,10 @@ const App: React.FC = () => {
                       <input 
                         type="number" 
                         value={width > 0 ? width : ''}
-                        onChange={(e) => handleWidthChange(parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value) || 0;
+                          handleWidthChange(value);
+                        }}
                         className="w-full px-4 py-4 bg-slate-800 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white text-lg placeholder:text-slate-500"
                         step="1"
                         placeholder="0"
@@ -268,8 +286,8 @@ const App: React.FC = () => {
                   <input 
                     type="number" 
                     name="area"
-                    value={inputs.area}
-                    onChange={(e) => handleAreaChange(parseFloat(e.target.value) || 0)}
+                    value={inputs.area > 0 ? inputs.area : ''}
+                    onChange={handleAreaChange}
                     className="w-full px-5 py-4 bg-slate-800 border border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white text-lg placeholder:text-slate-500"
                     min="0"
                     step="0.1"
@@ -327,7 +345,7 @@ const App: React.FC = () => {
               className="flex items-center justify-center text-white"
             >
               <div className="bg-white/20 px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/30 transition-colors">
-                卡位參加數位工程APP封測限額!???
+                加入好友不定期更新工程神器
               </div>
             </a>
           </section>
